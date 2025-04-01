@@ -1,0 +1,10 @@
+dlib
+fer
+mediapipe
+numpy
+opencv_contrib_python
+opencv_python
+Pillow
+tensorflow
+# torch==2.5.1
+# facenet_pytorch==2.6.0

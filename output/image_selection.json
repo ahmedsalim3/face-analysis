@@ -1,0 +1,67 @@
+{
+  "test_5.jpg": {
+    "face_0": {
+      "eyes_open": false,
+      "looking_at_camera": true,
+      "smiling_score": 0.0
+    },
+    "face_1": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 0.0
+    }
+  },
+  "test_7.jpg": {
+    "face_0": {
+      "eyes_open": false,
+      "looking_at_camera": false,
+      "smiling_score": 1.0
+    },
+    "face_1": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 1.0
+    }
+  },
+  "test_3.jpg": {
+    "face_0": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 0.95
+    }
+  },
+  "test_1.jpg": {
+    "face_0": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 1.0
+    }
+  },
+  "test_4.jpg": {
+    "face_0": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 1.0
+    },
+    "face_1": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 1.0
+    }
+  },
+  "test_2.png": {
+    "face_0": {
+      "eyes_open": true,
+      "looking_at_camera": false,
+      "smiling_score": 1.0
+    }
+  },
+  "test_8.png": {
+    "face_0": {
+      "eyes_open": true,
+      "looking_at_camera": true,
+      "smiling_score": 0.07
+    }
+  },
+  "test_6.jpg": {}
+}
