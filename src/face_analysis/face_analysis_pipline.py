@@ -32,11 +32,14 @@ class FaceAnalysisPipeline:
         self.eyes_pipeline = EyesPipeline(
             weights=config.EYE_STATE_MODEL_WEIGHTS,
             shape_predictor=config.SHAPE_PREDICTOR,
+            detector="retinaface", # or "dlib"
             device=device,
-            include_detector=True
         )
         
-        self.emotions_pipeline = EmotionsPipeline()
+        self.emotions_pipeline = EmotionsPipeline(
+            detector= "retinaface", # or "mtcnn", or "cascade"
+            device= "cpu",
+        )
     
     def analyze_image(self, img_path, save_annotated_images=True):
         from .gazes import render as gazes_render
