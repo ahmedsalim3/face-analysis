@@ -1,7 +1,39 @@
+# MIT License
+
+# Copyright (c) 2025 Ahmed Salim
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# ==================================================================================
+# Utility functions were inspired by the following code:
+# https://github.com/ymitiku/EyeStateDetection/blob/master/demo/__init__.py
+# ==================================================================================
+
+import logging
+import os
+import tensorflow as tf
+
 import cv2
 import numpy as np
-import dlib
 
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 def get_dlib_points(img, predictor, rectangle):
     """
@@ -28,48 +60,6 @@ def get_dlib_points(img, predictor, rectangle):
     return dlib_points
 
 
-def get_left_eye_attributes(face_image, predictor, image_shape):
-    """
-    Extracts eye image, key points, distance of each key points
-    from centroid of the key points and angles between centroid and
-    each key points of left eye.
-
-    Parameters
-    ----------
-    face_image : numpy.ndarray
-        Image of the face
-    predictor : dlib.shape_predictor
-        Dlib Shape predictor to extract key points
-    image_shape : tuple
-        The output eye image shape
-
-    Returns
-    -------
-    eye_image : numpy.ndarray
-        Image of the eye region
-    key_points_11 : numpy.ndarray
-        Eleven key points translated to eye image frame
-    dists : numpy.ndarray
-        Distances of each 11 key points from centeroid of all 11 key points
-    angles : numpy.ndarray
-        Angles between each 11 key points from centeroid
-
-    """
-
-    face_image_shape = face_image.shape
-    face_rect = dlib.rectangle(0, 0, face_image_shape[1], face_image_shape[0])
-    kps = get_dlib_points(face_image, predictor, face_rect)
-
-    # Get key points of the eye and eyebrow
-    key_points_11 = get_left_key_points(kps)
-
-    eye_image, key_points_11, dists, angles = get_attributes_wrt_local_frame(
-        face_image, key_points_11, image_shape
-    )
-
-    return eye_image, key_points_11, dists, angles
-
-
 def get_left_key_points(key_points):
     """
     Extract dlib key points from left eye region including eye brow region.
@@ -86,49 +76,6 @@ def get_left_key_points(key_points):
     output[0:5] = key_points[22:27]
     output[5:11] = key_points[42:48]
     return output
-
-
-def get_right_eye_attributes(face_image, predictor, image_shape):
-    """
-    Extracts eye image, key points, distance of each key points
-    from centroid of the key points and angles between centroid and
-    each key points of right eye.
-
-    Parameters
-    ----------
-    face_image : numpy.ndarray
-        Image of the face
-    predictor : dlib.shape_predictor
-        Dlib Shape predictor to extract key points
-    image_shape : tuple
-        The output eye image shape
-
-    Returns
-    -------
-    eye_image : numpy.ndarray
-        Image of the eye region
-    key_points_11 : numpy.ndarray
-        Eleven key points translated to eye image frame
-    dists : numpy.ndarray
-        Distances of each 11 key points from centeroid of all 11 key points
-    angles : numpy.ndarray
-        Angles between each 11 key points from centeroid
-
-    """
-
-    face_image_shape = face_image.shape
-    face_rect = dlib.rectangle(0, 0, face_image_shape[1], face_image_shape[0])
-    kps = get_dlib_points(face_image, predictor, face_rect)
-
-    # Get key points of the eye and eyebrow
-    key_points_11 = get_right_key_points(kps)
-
-    eye_image, key_points_11, dists, angles = get_attributes_wrt_local_frame(
-        face_image, key_points_11, image_shape
-    )
-
-    return eye_image, key_points_11, dists, angles
-
 
 def get_right_key_points(key_points):
     """
@@ -214,14 +161,14 @@ def get_attributes_wrt_local_frame(face_image, key_points_11, image_shape):
     centroid = np.array([key_points_11.mean(axis=0)])
 
     # calculate distances from  centroid to each left eye key points
-    dists = distance_between(key_points_11, centroid)
+    dists = __distance_between(key_points_11, centroid)
 
     # calculate angles between centroid point vector and left eye key points vectors
-    angles = angles_between(key_points_11, centroid)
+    angles = __angles_between(key_points_11, centroid)
     return eye_image, key_points_11, dists, angles
 
 
-def distance_between(v1, v2):
+def __distance_between(v1, v2):
     """
     Calculates euclidean distance between two vectors.
     If one of the arguments is matrix then the output is calculated for each row
@@ -247,7 +194,7 @@ def distance_between(v1, v2):
     return dists
 
 
-def angles_between(v1, v2):
+def __angles_between(v1, v2):
     """
     Calculates angle between two point vectors.
 
@@ -272,3 +219,36 @@ def angles_between(v1, v2):
     angles = np.arccos(np.clip(cosine_of_angle, -1, 1))
 
     return angles
+
+
+def setup_gpu(device: str = "gpu") -> str:
+    device = device.lower()
+
+    if device == "gpu" or device == "cuda":
+        gpus = tf.config.list_physical_devices('GPU')
+        if gpus:
+            try:
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
+                
+                tf.config.set_logical_device_configuration(
+                    gpus[0],
+                    [tf.config.LogicalDeviceConfiguration(memory_limit=4096)]
+                )
+                
+                log.info("Using GPU for processing")
+                return "/GPU:0"
+            except RuntimeError as e:
+                log.warning(f"GPU Configuration Error: {e}")
+        log.info("No GPU found, falling back to CPU")
+        device = "cpu"
+
+    # Force CPU usage
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+    try:
+        tf.config.set_visible_devices([], 'GPU')
+    except RuntimeError as e:
+        log.warning(f"Error disabling GPU: {e}")
+    
+    log.info("Using CPU for processing")
+    return "/CPU:0"
