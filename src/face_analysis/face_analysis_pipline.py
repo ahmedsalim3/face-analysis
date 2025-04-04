@@ -24,7 +24,8 @@ class FaceAnalysisPipeline:
         
         self.gaze_pipeline = GazesPipeline(
             weights=config.L2CSNET_WEIGHTS,
-            arch='ResNet50',
+            arch='ResNet50', # or "ResNet18", "ResNet34", "ResNet101", "ResNet152"
+            detector="retinaface", # or "mtcnn"
             device=self.device
         )
         

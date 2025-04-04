@@ -21,7 +21,7 @@ def draw_gaze(a,b,c,d,image_in, pitchyaw, thickness=2, color=(255, 255, 0),sclae
     return image_out
 
 def draw_bbox(frame: np.ndarray, bbox: np.ndarray, color=(0, 255, 0), thickness=1):
-
+    
     x_min = int(bbox[0])
     if x_min < 0:
         x_min = 0
@@ -32,33 +32,39 @@ def draw_bbox(frame: np.ndarray, bbox: np.ndarray, color=(0, 255, 0), thickness=
     y_max = int(bbox[3])
 
     cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), color, thickness)
-    
     return frame
 
 def render(frame: np.ndarray, results: GazeResultContainer):
-    frame = frame.copy()
 
-    # Draw bounding boxes
-    for bbox in results.bboxes:
-        frame = draw_bbox(frame, bbox)
+    # if there are bboxes to render
+    if results.bboxes.shape[0] != 0:
+
+        # Draw bounding boxes
+        for bbox in results.bboxes:
+            frame = draw_bbox(frame, bbox)
 
     # Draw Gaze
     for i in range(results.pitch.shape[0]):
 
-        bbox = results.bboxes[i]
         pitch = results.pitch[i]
         yaw = results.yaw[i]
-        looking_at_camera = results.looking_at_camera[i]
-        
-        # Extract safe min and max of x,y
-        x_min=int(bbox[0])
-        if x_min < 0:
-            x_min = 0
-        y_min=int(bbox[1])
-        if y_min < 0:
-            y_min = 0
-        x_max=int(bbox[2])
-        y_max=int(bbox[3])
+
+        if results.bboxes.shape[0] != 0:
+            bbox = results.bboxes[i]
+            # Extract safe min and max of x,y
+            x_min=int(bbox[0])
+            if x_min < 0:
+                x_min = 0
+            y_min=int(bbox[1])
+            if y_min < 0:
+                y_min = 0
+            x_max=int(bbox[2])
+            y_max=int(bbox[3])
+        else:
+            x_min=0
+            y_min=0
+            y_max=frame.shape[0]
+            x_max=frame.shape[1]
 
         # Compute sizes
         bbox_width = x_max - x_min
