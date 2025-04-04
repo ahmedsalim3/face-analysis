@@ -177,3 +177,5 @@ cython_debug/
 data/*
 !.gitkeep
 *.dat
+!mmod_human_face_detector.dat
+L2CSNet_gaze360.pkl
