@@ -40,15 +40,15 @@ class Pipeline:
         self, 
         weights: pathlib.Path, 
         shape_predictor: Optional[pathlib.Path],
+        detector: str = "retinaface",
         device: str = 'cpu', 
-        include_detector: bool = True,
         confidence_threshold: float = 0.5
         ):
 
         # Save input parameters
         self.weights = weights
         self.shape_predictor = shape_predictor
-        self.include_detector = include_detector
+        self.detector_type = detector
         self.device = setup_gpu(device)
         self.confidence_threshold = confidence_threshold
 
@@ -57,20 +57,25 @@ class Pipeline:
             self.model = EyeStateClassifierNet(compile=True).model
             self.model.load_weights(self.weights)
         
-        # Set up face detection and landmark prediction
-        if self.include_detector:
+        # Set up face detection based on detector_type
+        if self.detector_type == "retinaface":
             # RetinaFace for face detection
             if 'CPU' in self.device:
                 self.detector = RetinaFace()
             else:
                 gpu_id = 0  # Default GPU ID, adjust as needed
                 self.detector = RetinaFace(gpu_id=gpu_id)
+        elif self.detector_type == "dlib":
+            # Use dlib's frontal face detector
+            self.detector = dlib.get_frontal_face_detector()
+        else:
+            raise ValueError("Invalid detector type. Must be 'retinaface' or 'dlib'")
         
         # Always create the predictor if shape_predictor is provided
         if shape_predictor is not None:
             self.predictor = dlib.shape_predictor(str(self.shape_predictor))
         else:
-            raise ValueError("Shape predictor is required when include_detector is False")
+            raise ValueError("Shape predictor is required for landmark detection")
 
     def step(self, frame: np.ndarray) -> EyeStateResultContainer:
         """
@@ -94,7 +99,7 @@ class Pipeline:
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        if self.include_detector:
+        if self.detector_type == "retinaface":
             # Detect faces using RetinaFace
             faces = self.detector(frame)
             
@@ -123,24 +128,22 @@ class Pipeline:
                     # Create dlib rectangle for the face to use with the predictor
                     face_rect = dlib.rectangle(0, 0, 100, 100)
                     
-                    # Process the face if shape_predictor is available
-                    if hasattr(self, 'predictor'):
-                        l_state, l_confidence, r_state, r_confidence = self.process_face(face_img, face_rect)
-                        
-                        # Save data
-                        face_imgs.append(face_img)
-                        bboxes.append(box)
-                        landmarks.append(landmark)
-                        scores.append(score)
-                        left_states.append(l_state)
-                        right_states.append(r_state)
-                        left_confidences.append(l_confidence)
-                        right_confidences.append(r_confidence)
+                    # Process the face
+                    l_state, l_confidence, r_state, r_confidence = self.process_face(face_img, face_rect)
+                    
+                    # Save data
+                    face_imgs.append(face_img)
+                    bboxes.append(box)
+                    landmarks.append(landmark)
+                    scores.append(score)
+                    left_states.append(l_state)
+                    right_states.append(r_state)
+                    left_confidences.append(l_confidence)
+                    right_confidences.append(r_confidence)
             
-        else:
+        elif self.detector_type == "dlib":
             # Process directly using dlib for landmarks
-            dlib_detector = dlib.get_frontal_face_detector()
-            dlib_faces = dlib_detector(gray)
+            dlib_faces = self.detector(gray)
             
             for face in dlib_faces:
                 # Extract face
