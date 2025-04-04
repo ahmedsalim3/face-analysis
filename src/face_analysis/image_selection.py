@@ -107,7 +107,7 @@ def process_images(input_folder, output_folder, device="cuda", save_annotated_im
     output_dir = Path(output_folder)
     output_dir.mkdir(exist_ok=True, parents=True)
     
-    pipeline = FaceAnalysisPipeline(config, device=device)
+    pipeline = FaceAnalysisPipeline(config, output_dir=output_folder, device=device)
     
     image_extensions = ['.jpg', '.jpeg', '.png', '.bmp']
     image_paths = []
