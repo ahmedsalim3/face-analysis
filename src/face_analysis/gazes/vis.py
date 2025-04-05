@@ -36,12 +36,14 @@ def draw_bbox(frame: np.ndarray, bbox: np.ndarray, color=(0, 255, 0), thickness=
 
 def render(frame: np.ndarray, results: GazeResultContainer):
 
+    image_out = frame.copy()
+
     # if there are bboxes to render
     if results.bboxes.shape[0] != 0:
 
         # Draw bounding boxes
         for bbox in results.bboxes:
-            frame = draw_bbox(frame, bbox)
+            image_out = draw_bbox(image_out, bbox)
 
     # Draw Gaze
     for i in range(results.pitch.shape[0]):
@@ -63,13 +65,13 @@ def render(frame: np.ndarray, results: GazeResultContainer):
         else:
             x_min=0
             y_min=0
-            y_max=frame.shape[0]
-            x_max=frame.shape[1]
+            y_max=image_out.shape[0]
+            x_max=image_out.shape[1]
 
         # Compute sizes
         bbox_width = x_max - x_min
         bbox_height = y_max - y_min
 
-        draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch,yaw),color=(0,0,255))
+        draw_gaze(x_min,y_min,bbox_width, bbox_height,image_out,(pitch,yaw),color=(0,0,255))
 
-    return frame
+    return image_out
