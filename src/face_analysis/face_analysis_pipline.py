@@ -18,7 +18,7 @@ class FaceAnalysisPipeline:
         from .eyes import Pipeline as EyesPipeline
         from .emotions import Pipeline as EmotionsPipeline
 
-        self.device = torch.device(device)
+        self.device = device
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
         
@@ -33,7 +33,7 @@ class FaceAnalysisPipeline:
             weights=config.EYE_STATE_MODEL_WEIGHTS,
             shape_predictor=config.SHAPE_PREDICTOR,
             detector="retinaface", # or "dlib"
-            device=device,
+            device=self.device,
         )
         
         self.emotions_pipeline = EmotionsPipeline(

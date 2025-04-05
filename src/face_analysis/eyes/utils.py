@@ -222,6 +222,7 @@ def __angles_between(v1, v2):
 
 
 def setup_gpu(device: str = "gpu") -> str:
+    print(f"========= {device}")
     device = device.lower()
 
     if device == "gpu" or device == "cuda":

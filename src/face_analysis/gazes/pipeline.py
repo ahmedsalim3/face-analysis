@@ -60,7 +60,7 @@ class Pipeline:
         self.arch = arch
         
         # Set up device
-        if device == "gpu" and torch.cuda.is_available():
+        if device in ["gpu", "cuda"] and torch.cuda.is_available():
             self.device = torch.device("cuda")
         else:
             log.info("No GPU detected, The default CPU will be used instead!")
