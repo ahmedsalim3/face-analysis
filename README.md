@@ -1,26 +1,22 @@
 # Face Analysis
 
-A tool for analyzing faces in images to detect eye state, gaze direction, and facial expressions
+A package for analyzing faces in images to detect eye state, gaze direction, and facial expressions
 
 ## How to install:
 
-- Create a virtual environment:
+Follow these steps:
+
+1. Create a virtual environment:
 
 ```sh
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 ```
 
-- Install dependencies:
+2. Install dependencies:
 
 ```sh
-pip install -r requirements.txt
-```
-
-- Download Shape Predictor:
-
-```sh
-bash scripts/shape_predictor.sh
+bash install.sh
 ```
 
 ## How to run the script:
@@ -29,111 +25,86 @@ bash scripts/shape_predictor.sh
 - Run the script with these options:
 
 ```sh
-python3 src/main.py [-h] --input INPUT [--debug]
+python -m face_analysis.image_selection --input input/couples --output output/image_selection/couples --save-annotated-images
 ```
 
-### Process a folder of images:
+### Using specific image:
 
 ```sh
-python3 src/main.py --input input/
+python -m face_analysis.run_face_analysis --images input/test_1.png --output output
 ```
 
-### Process a single image:
+### Or multiple images:
 
 ```sh
-python3 src/main.py --input input/test_1.jpg --debug
+python -m face_analysis.run_face_analysis --images input/test_1.png input/test_2.jpg --output output --save-annotated-images
 ```
-_debug mode enables step-by-step visualization of the emotion/gaze detection process_
+_setting `--device cuda` will use the GPU for processing, otherwise it will use the `cpu`._
 
-### Demo App:
+~~### Demo App:~~
 
-The project includes a graphical demo application for interactively analyzing images:
+~~The project includes a graphical demo application for interactively analyzing images:~~
 
-```sh
-python3 src/app.py
-```
+**Let me know, if you need it**
 
-The demo app provides:
+~~The demo app provides:~~
 
-- Side-by-side view of original and annotated images
-- Option to select any image from your file system
-- Ability to download the analysis results as a JSON file
-- Visual representation of face features, eye state, and gaze direction
+- ~~Side-by-side view of original and annotated images~~
+- ~~Option to select any image from your file system~~
+- ~~Ability to download the analysis results as a JSON file~~
+- ~~Visual representation of face features, eye state, and gaze direction~~
 
 ## Output
 
-The script generates two JSON files in the results directory:
+The scripts generates two JSON files in the results directory:
 
-1. `predictions.json` - Contains detailed analysis of all faces
+1. `face_analysis_results.json` - Contains detailed analysis of all faces
 2. `image_selection.json` - Contains simplified results with only:
    - Whether eyes are open
    - Whether subject is looking at camera
    - Smiling score (0-1)
 
-Example simplified output:
+Annotated images are saved to the `output/annotated/` directory, check them [here](output/annotated).
 
-```json
-{
-  "test-1.jpg": {
-    "face_0": {
-      "eyes_open": true,
-      "looking_at_camera": true,
-      "smiling_score": 1.0
-    }
-  }
-}
-```
+## Quick Start Example
 
-Annotated images are saved to the `output/images/` directory when using debug mode.
-
-## Example Usages  
-
-| Input | Output |
-|-------|--------|
-| ![](./input/test_1.jpg) | ![](./output/images/test_1.jpg) |
-| ![](./input/test_2.png) | ![](./output/images/test_2.png) |
-| ![](./input/test_3.jpg) | ![](./output/images/test_3.jpg) |
-| ![](./input/test_4.jpg) | ![](./output/images/test_4.jpg) |
-| ![](./input/test_5.jpg) | ![](./output/images/test_5.jpg) |
-| ![](./input/test_6.png) | ![](./output/images/test_6.jpg) |
-| ![](./input/test_7.jpg) | ![](./output/images/test_7.jpg) |
-| ![](./input/test_8.png) | ![](./output/images/test_8.png) |
+To quickly test the face analysis pipeline refer to this [notebook](./notebooks/notebook.ipynb):
 
 ## Repo Structure
 
 ```sh
-.
-├── README.md
-├── requirements.txt
-├── data/
-│   
-├── input
-│   └── test_1.jpg
-│   
-├── output
-│   ├── images
-│   │   └── test_1.jpg
-│   ├── image_selection.json
-│   └── predictions.json
-│   
-├── models
+project_root/
+├── data/               
+├── input/               
+│   ├── test_1.jpg
+│   └── ... (8 test images)
+├── models/          
+│   ├── L2CSNet_gaze360.pkl
 │   ├── eye_state_classifier.h5
 │   └── shape_predictor_68_face_landmarks.dat
-│   
-├── scripts
-│   ├── datasets
-│   │   └── cew.sh
-│   ├── inference.sh
-│   └── shape_predictor.sh
-│   
-└── src
-    ├── config.py
-    ├── demo.py
-    ├── emotion_detector.py
-    ├── eye_state.py
-    ├── face_detector.py
-    ├── gaze_detector.py
-    ├── main.py
-    ├── model.py
-    └── utils/
+├── output/             
+│   ├── annotated/ 
+│   │   ├── test_1_emotions.png
+│   │   ├── test_1_eyes.png
+│   │   └── ...
+│   ├── image_selection.json
+│   └── test_3.jpg
+├── scripts/               
+│   ├── datasets/
+│   ├── face_analyzer.sh
+│   └── ...
+├── src/                    
+│   └── face_analysis/  
+│       ├── emotions/      
+│       ├── eyes/          
+│       ├── gazes/  
+│       ├── config.py
+│       ├── image_selection.py
+│       └── run_face_analysis.py
+├── LICENSE.txt
+├── MANIFEST.in
+├── pyproject.toml
+├── README.md
+├── requirements.txt
+└── results.json
 ```
