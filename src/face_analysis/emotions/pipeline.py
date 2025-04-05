@@ -67,7 +67,7 @@ class Pipeline:
         self,
         weights: Optional[pathlib.Path] = None,
         device: str = "cpu",
-        detector: str = "",
+        detector: str = "retinaface",
         confidence_threshold: float = 0.5,
         scale_factor: float = 1.1,
         min_face_size: int = 50,
@@ -110,7 +110,7 @@ class Pipeline:
             cascade_file = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
             self.detector = cv2.CascadeClassifier(cascade_file)
 
-        else:
+        elif self.detector_type == "retinaface":
             if "CPU" in self.device:
                 self.detector = RetinaFace()
             else:
