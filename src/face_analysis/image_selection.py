@@ -1,4 +1,5 @@
 import logging
+from types import SimpleNamespace
 import json
 import shutil
 import numpy as np
@@ -6,7 +7,16 @@ from pathlib import Path
 import argparse
 
 from face_analysis.face_analysis_pipline import FaceAnalysisPipeline
-import face_analysis.config as config
+
+config_dict = {
+    'L2CSNET_WEIGHTS': 'models/L2CSNet_gaze360.pkl',
+    'EYE_STATE_MODEL_WEIGHTS': 'models/eye_state_classifier.h5',
+    'SHAPE_PREDICTOR': 'models/shape_predictor_68_face_landmarks.dat'
+}
+
+config = SimpleNamespace(**{key: Path(value) for key, value in config_dict.items()})
+for f in vars(config).values():
+    assert f.exists(), f"File does not exist: {f}"
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("face_analysis.image_selection")
