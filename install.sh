@@ -7,7 +7,7 @@ echo "Downloading L2CSNet Weights..."
 bash scripts/l2csnet_weights.sh
 
 echo "Installing dependencies..."
-pip install -e .
+pip install .
 
 echo "Verifying installation..."
 python -c "import face_analysis; print(face_analysis.__version__)"

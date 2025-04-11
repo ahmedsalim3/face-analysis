@@ -50,6 +50,8 @@ from .results import EmotionResultContainer
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("emotions")
 
+import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
 
 class Pipeline:
 
@@ -127,7 +129,7 @@ class Pipeline:
             else:
                 emotion_model = str(weights)
 
-            log.info(f"Loading emotion model from: {emotion_model}")
+            # log.info(f"Loading emotion model from: {emotion_model}")
             self.emotion_classifier = load_model(emotion_model, compile=False)
             self.emotion_target_size = self.emotion_classifier.input_shape[1:3]
 

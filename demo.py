@@ -14,9 +14,6 @@ from types import SimpleNamespace
 import cv2
 import argparse
 import logging
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 import time
 
 
@@ -99,74 +96,47 @@ def process_image(image_path, pipelines, output_path=None, display=False):
     """Process a single image with all pipelines."""
     gaze_pipeline, eye_pipeline, emotion_pipeline = pipelines
     
-    try:
-        img_in = cv2.imread(image_path)
-        if img_in is None:
-            log.error(f"Failed to read image: {image_path}")
-            return
-        
-        log.info(f"Processing image: {image_path}")
-        
-        # Run all pipelines
-        start_time = time.time()
-        gaze_results = gaze_pipeline.step(img_in.copy())
-        gaze_time = time.time() - start_time
-        log.info(f"Gaze detection completed in {gaze_time:.2f}s")
-        
-        start_time = time.time()
-        eye_results = eye_pipeline.step(img_in.copy())
-        eye_time = time.time() - start_time
-        log.info(f"Eye state analysis completed in {eye_time:.2f}s")
-        
-        start_time = time.time()
-        emotion_results = emotion_pipeline.step(img_in.copy())
-        emotion_time = time.time() - start_time
-        log.info(f"Emotion recognition completed in {emotion_time:.2f}s")
-        
-        # Render results
-        gaze_img = GazesRender(img_in.copy(), gaze_results)
-        eye_img = eyes_render(img_in.copy(), eye_results)
-        emotion_img = emotions_render(img_in.copy(), emotion_results)
-        
-        fig = plt.figure(figsize=(20, 10))
-        grid = GridSpec(2, 3, figure=fig)
-        
-        ax_orig = fig.add_subplot(grid[0, :])
-        ax_orig.imshow(cv2.cvtColor(img_in, cv2.COLOR_BGR2RGB))
-        ax_orig.set_title("Original Image")
-        ax_orig.axis('off')
-        
-        ax_gaze = fig.add_subplot(grid[1, 0])
-        ax_gaze.imshow(cv2.cvtColor(gaze_img, cv2.COLOR_BGR2RGB))
-        ax_gaze.set_title("Gaze Detection")
-        ax_gaze.axis('off')
-        
-        ax_eye = fig.add_subplot(grid[1, 1])
-        ax_eye.imshow(cv2.cvtColor(eye_img, cv2.COLOR_BGR2RGB))
-        ax_eye.set_title("Eye State")
-        ax_eye.axis('off')
-        
-        ax_emotion = fig.add_subplot(grid[1, 2])
-        ax_emotion.imshow(cv2.cvtColor(emotion_img, cv2.COLOR_BGR2RGB))
-        ax_emotion.set_title("Emotion")
-        ax_emotion.axis('off')
-        
-        plt.tight_layout()
-        
-        if output_path:
-            plt.savefig(output_path)
-            log.info(f"Results saved to {output_path}")
-        
-        if display:
-            plt.show()
-        else:
-            plt.close()
-            
-        return gaze_results, eye_results, emotion_results
-        
-    except Exception as e:
-        log.error(f"Error processing image: {str(e)}")
-        return None, None, None    
+    img_in = cv2.imread(image_path)
+    if img_in is None:
+        log.error(f"Failed to read image: {image_path}")
+        return
+    
+    log.info(f"Processing image: {image_path}")
+
+    # Run all pipelines
+    start = time.time()
+    gaze_results = gaze_pipeline.step(img_in.copy())
+    log.info(f"Gaze detection completed in {time.time() - start:.2f}s")
+
+    start = time.time()
+    eye_results = eye_pipeline.step(img_in.copy())
+    log.info(f"Eye state analysis completed in {time.time() - start:.2f}s")
+
+    start = time.time()
+    emotion_results = emotion_pipeline.step(img_in.copy())
+    log.info(f"Emotion recognition completed in {time.time() - start:.2f}s")
+
+    # Render results
+    gaze_img = GazesRender(img_in.copy(), gaze_results)
+    eye_img = eyes_render(img_in.copy(), eye_results)
+    emotion_img = emotions_render(img_in.copy(), emotion_results)
+
+    if display:
+        cv2.imshow("Original", img_in)
+        cv2.imshow("Gaze", gaze_img)
+        cv2.imshow("Eye State", eye_img)
+        cv2.imshow("Emotion", emotion_img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    if output_path:
+        cv2.imwrite(f"{output_path}_original.jpg", img_in)
+        cv2.imwrite(f"{output_path}_gaze.jpg", gaze_img)
+        cv2.imwrite(f"{output_path}_eye_state.jpg", eye_img)
+        cv2.imwrite(f"{output_path}_emotion.jpg", emotion_img)
+        log.info(f"Results saved to {output_path}")
+
+    return gaze_results, eye_results, emotion_results 
 
 
 if __name__ == "__main__":
