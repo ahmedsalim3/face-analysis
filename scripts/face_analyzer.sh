@@ -12,4 +12,4 @@
 #                         Save all the annotated images
 # python -m face_analysis.run_face_analysis --images input/test_1.png --output output --device "cuda" --save-annotated-images
 # python -m face_analysis.run_face_analysis --images input/test_1.png --output output
-python -m face_analysis.run_face_analysis --images input/test_1.png input/test_2.jpg --output output --save-annotated-images
+python -m face_analysis.run_face_analysis --images input/test_1.png input/test_2.jpg input/test_3.jpg input/test_4.png --output output --save-annotated-images

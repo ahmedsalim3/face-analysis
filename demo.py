@@ -130,10 +130,14 @@ def process_image(image_path, pipelines, output_path=None, display=False):
         cv2.destroyAllWindows()
 
     if output_path:
-        cv2.imwrite(f"{output_path}_original.jpg", img_in)
-        cv2.imwrite(f"{output_path}_gaze.jpg", gaze_img)
-        cv2.imwrite(f"{output_path}_eye_state.jpg", eye_img)
-        cv2.imwrite(f"{output_path}_emotion.jpg", emotion_img)
+        output_path = Path(output_path)
+        output_path.mkdir(exist_ok=True)
+        
+        img_name = Path(image_path).stem
+        cv2.imwrite(output_path / f"{img_name}_original.jpg", img_in)
+        cv2.imwrite(output_path / f"{img_name}_gaze.jpg", gaze_img)
+        cv2.imwrite(output_path / f"{img_name}_eye_state.jpg", eye_img)
+        cv2.imwrite(output_path / f"{img_name}_emotion.jpg", emotion_img)
         log.info(f"Results saved to {output_path}")
 
     return gaze_results, eye_results, emotion_results 
