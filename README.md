@@ -1,10 +1,20 @@
 # Face Analysis
 
-A package for analyzing faces in images to detect eye state, gaze direction, and facial expressions
+A package for analyzing faces in images to detect eye state, gaze direction, and facial expressions.
+
+|   |   |
+|-------------|--------------|
+| ![demo](./data/demo.png) |
+|   |   |
+
+## Features
+
+- **Gaze Detection**: Determine gaze direction using ResNet models
+- **Eye State Classification**: Detect whether eyes are open or closed
+- **Emotion Recognition**: Identify facial expressions and emotions
+
 
 ## How to install:
-
-Follow these steps:
 
 1. Create a virtual environment:
 
@@ -18,89 +28,140 @@ source venv/bin/activate
 ```sh
 bash install.sh
 ```
+**Note: This script will download the following resources:**
 
-## How to run the script:
+   - The shape predictor from [dlib files](https://dlib.net/files/)
+   - The L2CSNet weights found at [L2CSNet repository](https://github.com/Ahmednull/L2CS-Net.git)
 
-- Place your images in the `input/` folder.
-- Run the script with these options:
+**After downloading these resources, the script will proceed to install the `face_analysis` package.**
 
-```sh
-python -m face_analysis.image_selection --input input/couples --output output/image_selection/couples --save-annotated-images
+## Usage Examples
+
+### Gaze Detection
+
+```python
+from face_analysis.gazes import Pipeline as GazesPipeline
+from face_analysis.gazes import render as GazesRender
+
+gaze_pipeline = GazesPipeline(
+    weights="models/L2CSNet_gaze360.pkl",
+    arch='ResNet50',  # Options: "ResNet18", "ResNet34", "ResNet101", "ResNet152"
+    detector="retinaface",  # Options: "mtcnn"
+    device="cuda",  # or "cpu"
+)
+
+img_in = cv2.imread("input/test.jpg")
+results = gaze_pipeline.step(img_in)
+img_out = GazesRender(img_in, results)
 ```
 
-### Using specific image:
+|   |   |
+|-------------|--------------|
+| ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_gazes.png) |
+|   |   |
 
-```sh
-python -m face_analysis.run_face_analysis --images input/test_1.png --output output
+### Eye State Detection
+
+```python
+from face_analysis.eyes import Pipeline as EyesPipeline
+from face_analysis.eyes import render as eyes_render
+
+eye_pipeline = EyesPipeline(
+    weights=config.EYE_STATE_MODEL_WEIGHTS,
+    shape_predictor=config.SHAPE_PREDICTOR,
+    detector="retinaface", # or "dlib"
+    device="cuda", # or "cpu"
+)
+
+img_in = cv2.imread(img_path)
+results = eye_pipeline.step(img_in)
+img_out = eyes_render(img_in, results)
 ```
 
-### Or multiple images:
+|   |   |
+|-------------|--------------|
+| ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_eyes.png) |
+|   |   |
+
+### Emotion Detection
+
+```python
+from face_analysis.emotions import Pipeline as EmotionsPipeline
+from face_analysis.emotions import render as emotions_render
+
+emotion_pipeline = EmotionsPipeline(
+    detector= "retinaface", # or "mtcnn", or "cascade"
+    device= "cpu",
+)
+
+img_in = cv2.imread(img_path)
+results = emotion_pipeline.step(img_in)
+img_out = emotions_render(img_in, results)
+```
+
+|   |   |
+|-------------|--------------|
+| ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_emotions.png) |
+|   |   |
+
+
+## Command Line Interface
+
+- Analyze single image:
 
 ```sh
-python -m face_analysis.run_face_analysis --images input/test_1.png input/test_2.jpg --output output --save-annotated-images
+python -m face_analysis.run_face_analysis --images input/test.jpg --output output
 ```
-_setting `--device cuda` will use the GPU for processing, otherwise it will use the `cpu`._
 
-~~### Demo App:~~
+- Analyze multiple images:
 
-~~The project includes a graphical demo application for interactively analyzing images:~~
+```sh
+python -m face_analysis.run_face_analysis \
+    --images input/test_1.png input/test_2.jpg  \
+    --output output \
+    --save-annotated-images
+```
 
-**Let me know, if you need it**
+**Options:**
 
-~~The demo app provides:~~
+   `--device cuda` to use GPU (default: cpu)
 
-- ~~Side-by-side view of original and annotated images~~
-- ~~Option to select any image from your file system~~
-- ~~Ability to download the analysis results as a JSON file~~
-- ~~Visual representation of face features, eye state, and gaze direction~~
+   `--save-annotated-images` to save visualization images
 
-## Output
+The input/output results for this run can be found [here](./output/).
 
-The scripts generates two JSON files in the results directory:
-
-1. `face_analysis_results.json` - Contains detailed analysis of all faces
-2. `image_selection.json` - Contains simplified results with only:
-   - Whether eyes are open
-   - Whether subject is looking at camera
-   - Smiling score (0-1)
-
-Annotated images are saved to the `output/annotated/` directory, check them [here](output/annotated).
 
 ## Quick Start Example
 
-To quickly test the face analysis pipeline refer to this [notebook](./notebooks/notebook.ipynb):
+For interactive examples, see the [notebook](./notebooks/notebook.ipynb)
 
 ## Repo Structure
 
 ```sh
 project_root/
 ├── data/               
-├── input/               
+├── input/
 │   ├── test_1.jpg
-│   └── ... (8 test images)
-├── models/          
-│   ├── L2CSNet_gaze360.pkl
-│   ├── eye_state_classifier.h5
-│   └── shape_predictor_68_face_landmarks.dat
+│   └── test_2.jpg          
 ├── output/             
 │   ├── annotated/ 
 │   │   ├── test_1_emotions.png
 │   │   ├── test_1_eyes.png
 │   │   └── ...
-│   ├── image_selection.json
-│   └── test_3.jpg
+│   └── face_analysis_results.json
+│
 ├── scripts/               
 │   ├── datasets/
 │   ├── face_analyzer.sh
 │   └── ...
+│
 ├── src/                    
-│   └── face_analysis/  
-│       ├── emotions/      
-│       ├── eyes/          
-│       ├── gazes/  
-│       ├── config.py
-│       ├── image_selection.py
-│       └── run_face_analysis.py
+│   └── face_analysis/
+│
+├── models/          
+│   ├── L2CSNet_gaze360.pkl
+│   ├── eye_state_classifier.h5
+│   └── shape_predictor_68_face_landmarks.dat
 ├── LICENSE.txt
 ├── MANIFEST.in
 ├── pyproject.toml
