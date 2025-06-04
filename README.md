@@ -16,41 +16,60 @@ A package for analyzing faces in images to detect eye state, gaze direction, and
 
 ## How to install:
 
-1. Create a virtual environment:
+1. Create a virtual environment and install dependencies:
 
 ```sh
-python3 -m venv venv
-source venv/bin/activate
+make install
 ```
 
-2. Install dependencies:
+This will:
+- Install all dependencies using `uv`
+- Set up pre-commit hooks for code quality
+
+2. Activate the environment:
 
 ```sh
-bash install.sh
+source .venv/bin/activate
 ```
-**Note: This script will download the following resources:**
-
-   - The shape predictor from [dlib files](https://dlib.net/files/)
-   - The L2CSNet weights found at [L2CSNet repository](https://github.com/Ahmednull/L2CS-Net.git)
-
-**After downloading these resources, the script will proceed to install the `face_analysis` package.**
 
 ## Usage Examples
 
-### Gaze Detection
+### Command Line Interface
+
+The package provides several command-line tools for analyzing faces in images:
+
+1. Analyze a single image:
+```sh
+bash scripts/run_analysis.sh single input/test_1.png
+```
+
+2. Analyze all images in a folder:
+```sh
+bash scripts/run_analysis.sh folder input/
+```
+
+3. Select the best image from a folder:
+```sh
+bash scripts/run_analysis.sh best input/
+```
+
+Output will be saved to `output/<command>/` directory.
+
+### Python API
+
+#### Gaze Detection
 
 ```python
 from face_analysis.gazes import Pipeline as GazesPipeline
 from face_analysis.gazes import render as GazesRender
 
 gaze_pipeline = GazesPipeline(
-    weights="models/L2CSNet_gaze360.pkl",
     arch='ResNet50',  # Options: "ResNet18", "ResNet34", "ResNet101", "ResNet152"
     detector="retinaface",  # Options: "mtcnn"
     device="cuda",  # or "cpu"
 )
 
-img_in = cv2.imread("input/test.jpg")
+img_in = cv2.imread("input/test_1.png")
 results = gaze_pipeline.step(img_in)
 img_out = GazesRender(img_in, results)
 ```
@@ -60,17 +79,15 @@ img_out = GazesRender(img_in, results)
 | ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_gazes.png) |
 |   |   |
 
-### Eye State Detection
+#### Eye State Detection
 
 ```python
 from face_analysis.eyes import Pipeline as EyesPipeline
 from face_analysis.eyes import render as eyes_render
 
 eye_pipeline = EyesPipeline(
-    weights=config.EYE_STATE_MODEL_WEIGHTS,
-    shape_predictor=config.SHAPE_PREDICTOR,
     detector="retinaface", # or "dlib"
-    device="cuda", # or "cpu"
+    device="cpu", # or "cuda"
 )
 
 img_in = cv2.imread(img_path)
@@ -83,7 +100,7 @@ img_out = eyes_render(img_in, results)
 | ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_eyes.png) |
 |   |   |
 
-### Emotion Detection
+#### Emotion Detection
 
 ```python
 from face_analysis.emotions import Pipeline as EmotionsPipeline
@@ -105,67 +122,29 @@ img_out = emotions_render(img_in, results)
 |   |   |
 
 
-## Command Line Interface
-
-- Analyze single image:
-
-```sh
-python -m face_analysis.run_face_analysis --images input/test.jpg --output output
-```
-
-- Analyze multiple images:
-
-```sh
-python -m face_analysis.run_face_analysis \
-    --images input/test_1.png input/test_2.jpg  \
-    --output output \
-    --save-annotated-images
-```
-
-**Options:**
-
-   `--device cuda` to use GPU (default: cpu)
-
-   `--save-annotated-images` to save visualization images
-
-The input/output results for this run can be found [here](./output/).
-
-
-## Quick Start Example
-
-For interactive examples, see the [notebook](./notebooks/notebook.ipynb)
-
 ## Repo Structure
 
 ```sh
 project_root/
 ├── data/               
 ├── input/
-│   ├── test_1.jpg
-│   └── test_2.jpg          
+│   ├── test_1.png
+│   └── test_2.jpg       
 ├── output/             
-│   ├── annotated/ 
-│   │   ├── test_1_emotions.png
-│   │   ├── test_1_eyes.png
-│   │   └── ...
+│   ├── single/
+│   ├── folder/
+│   ├── best/
 │   └── face_analysis_results.json
 │
-├── scripts/               
-│   ├── datasets/
-│   ├── face_analyzer.sh
+├── scripts/
+│   └── ...
+├── face_analysis/                    
 │   └── ...
 │
-├── src/                    
-│   └── face_analysis/
-│
-├── models/          
-│   ├── L2CSNet_gaze360.pkl
-│   ├── eye_state_classifier.h5
-│   └── shape_predictor_68_face_landmarks.dat
 ├── LICENSE.txt
-├── MANIFEST.in
 ├── pyproject.toml
 ├── README.md
 ├── requirements.txt
-└── results.json
+├── uv.lock
+└── Makefile
 ```
