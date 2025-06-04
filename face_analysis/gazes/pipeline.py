@@ -38,15 +38,18 @@ except ImportError:
 
 from .utils import prep_input_numpy, getArch
 from .results import GazeResultContainer
+from ..commons.get_weights import download_weights_if_necessary 
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("gaze")
+
+L2CSNET_WEIGHT_URL = "https://drive.google.com/uc?id=18S956r4jnHtSeT8z8t3z8AoJZjVnNqPJ"
 
 class Pipeline:
 
     def __init__(
         self, 
-        weights: pathlib.Path, 
+        weights: pathlib.Path = None, 
         arch: str = "ResNet50",
         detector: str = "retinaface",
         device: str = "cpu",
@@ -59,6 +62,13 @@ class Pipeline:
         self.confidence_threshold = confidence_threshold
         self.arch = arch
         
+        if self.weights is None:
+            self.weights = download_weights_if_necessary(
+                file_name='L2CSNet_gaze360.pkl',
+                source_url=L2CSNET_WEIGHT_URL,
+                compress_type=None
+            )
+
         # Set up device
         if device in ["gpu", "cuda"] and torch.cuda.is_available():
             self.device = torch.device("cuda")

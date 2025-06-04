@@ -32,14 +32,16 @@ from face_detection import RetinaFace
 from .utils import get_attributes_wrt_local_frame, setup_gpu, get_dlib_points, get_left_key_points, get_right_key_points
 from .results import EyeStateResultContainer
 from .model import EyeStateClassifierNet
+from ..commons.get_weights import download_weights_if_necessary 
 
+SHAPE_PREDICTOR_URL = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
 
 class Pipeline:
 
     def __init__(
         self, 
-        weights: pathlib.Path, 
-        shape_predictor: Optional[pathlib.Path],
+        weights: pathlib.Path = None, 
+        shape_predictor: Optional[pathlib.Path] = None,
         detector: str = "retinaface",
         device: str = 'cpu', 
         confidence_threshold: float = 0.5
@@ -52,6 +54,21 @@ class Pipeline:
         self.device = setup_gpu(device)
         self.confidence_threshold = confidence_threshold
 
+        if shape_predictor is None:
+            self.shape_predictor = download_weights_if_necessary(
+                file_name='shape_predictor_68_face_landmarks.dat',
+                source_url=SHAPE_PREDICTOR_URL,
+                compress_type='bz2'
+            )
+            self.predictor = dlib.shape_predictor(str(self.shape_predictor))
+        
+        if self.weights is None:
+            self.weights = download_weights_if_necessary(
+                file_name='eye_state_model.h5',
+                source_url="https://github.com/ahmedsalim3/eye-analysis/raw/refs/heads/main/weights/eye_state_model.h5",
+                compress_type=None
+            )
+        
         # Create eye state classifier model
         with tf.device(self.device):
             self.model = EyeStateClassifierNet(compile=True).model
@@ -70,12 +87,6 @@ class Pipeline:
             self.detector = dlib.get_frontal_face_detector()
         else:
             raise ValueError("Invalid detector type. Must be 'retinaface' or 'dlib'")
-        
-        # Always create the predictor if shape_predictor is provided
-        if shape_predictor is not None:
-            self.predictor = dlib.shape_predictor(str(self.shape_predictor))
-        else:
-            raise ValueError("Shape predictor is required for landmark detection")
 
     def step(self, frame: np.ndarray) -> EyeStateResultContainer:
         """
