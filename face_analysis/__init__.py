@@ -20,7 +20,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# from .face_analysis_pipline import FaceAnalysisPipeline
-
-# __all__ = ['FaceAnalysisPipeline']
-# __version__ = "0.0.1"
+from .face_detection.face_detection import RetinaFace

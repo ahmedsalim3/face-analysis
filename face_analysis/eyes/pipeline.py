@@ -27,7 +27,11 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import dlib
-from face_detection import RetinaFace
+
+try:
+    from face_detection import RetinaFace
+except ImportError:
+    from face_analysis import RetinaFace
 
 from face_analysis.eyes.utils import get_attributes_wrt_local_frame, setup_gpu, get_dlib_points, get_left_key_points, get_right_key_points
 from face_analysis.eyes.results import EyeStateResultContainer

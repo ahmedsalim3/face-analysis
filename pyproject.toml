@@ -14,7 +14,6 @@ keywords = ["facial-expressions", "gaze-estimation", "eye-tracking", "deep-learn
 
 dependencies = [
     "dlib>=19.24.6",
-    "face-detection",
     "facenet-pytorch==2.6.0",
     "gdown>=5.2.0",
     "matplotlib>=3.3.4",
@@ -92,11 +91,13 @@ ignore_missing_imports = true
 
 [tool.setuptools]
 packages = ["face_analysis"]
+package-data = { face_analysis = ["face_detection/*", "face_detection/**/*"] }
+
 
 [tool.setuptools_scm]
 
 [tool.uv.sources]
-face-detection = { git = "https://github.com/elliottzheng/face-detection" }
+face-detection = { git = "https://github.com/elliottzheng/face-detection", rev = "786fbab7095623c348e251f1f0a8b323721c6a84" }
 # can be empty if no extra settings are needed, presence enables setuptools_scm
 
 [tool.setuptools.dynamic]

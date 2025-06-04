@@ -372,7 +372,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "dlib", specifier = ">=19.24.6" },
-    { name = "face-detection", git = "https://github.com/elliottzheng/face-detection" },
+    { name = "face-detection", git = "https://github.com/elliottzheng/face-detection.git?rev=master" },
     { name = "facenet-pytorch", specifier = "==2.6.0" },
     { name = "gdown", specifier = ">=5.2.0" },
     { name = "ipython", marker = "extra == 'dev'" },
@@ -396,7 +396,7 @@ provides-extras = ["dev"]
 [[package]]
 name = "face-detection"
 version = "1.0.5"
-source = { git = "https://github.com/elliottzheng/face-detection#786fbab7095623c348e251f1f0a8b323721c6a84" }
+source = { git = "https://github.com/elliottzheng/face-detection.git?rev=master#786fbab7095623c348e251f1f0a8b323721c6a84" }
 dependencies = [
     { name = "numpy" },
     { name = "torch" },

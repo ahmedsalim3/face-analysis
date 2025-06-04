@@ -28,7 +28,11 @@ import cv2
 import numpy as np
 import torch
 import torch.nn as nn
-from face_detection import RetinaFace
+
+try:
+    from face_detection import RetinaFace
+except ImportError:
+    from face_analysis import RetinaFace
 
 try:
     from facenet_pytorch import MTCNN

@@ -34,7 +34,6 @@ import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
 
-from face_detection import RetinaFace
 
 try:
     from facenet_pytorch import MTCNN
@@ -45,6 +44,11 @@ except ImportError:
 
 import tensorflow as tf
 tf.get_logger().setLevel('ERROR')
+
+try:
+    from face_detection import RetinaFace
+except ImportError:
+    from face_analysis import RetinaFace
 
 from face_analysis.commons.logger import Logger
 from face_analysis.emotions.utils import load_image, setup_gpu
