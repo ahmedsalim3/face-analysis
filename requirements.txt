@@ -1,16 +1,14 @@
 dlib>=19.24.6
-facenet-pytorch>=2.6.0
 numpy>=1.19.5
-opencv-contrib-python>=4.10.0.84
 opencv-python>=4.5.5
 Pillow>=8.4.0
 pandas>=1.1.5
-Requests>=2.32.3
 matplotlib>=3.3.4
 scipy>=1.5.4
 tensorflow>=2.10
 torch>=1.10.1
 torchvision>=0.11.2
 facenet-pytorch==2.6.0
-git+https://github.com/elliottzheng/face-detection
+gdown>=5.2.0
+face_detection@git+https://github.com/elliottzheng/face-detection
 
