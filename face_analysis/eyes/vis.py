@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
-from .results import EyeStateResultContainer
+
+from face_analysis.eyes.results import EyeStateResultContainer
 
 def draw_bbox(frame: np.ndarray, bbox: np.ndarray, color=(0, 255, 0), thickness=1):
 

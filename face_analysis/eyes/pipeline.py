@@ -29,10 +29,10 @@ import tensorflow as tf
 import dlib
 from face_detection import RetinaFace
 
-from .utils import get_attributes_wrt_local_frame, setup_gpu, get_dlib_points, get_left_key_points, get_right_key_points
-from .results import EyeStateResultContainer
-from .model import EyeStateClassifierNet
-from ..commons.get_weights import download_weights_if_necessary 
+from face_analysis.eyes.utils import get_attributes_wrt_local_frame, setup_gpu, get_dlib_points, get_left_key_points, get_right_key_points
+from face_analysis.eyes.results import EyeStateResultContainer
+from face_analysis.eyes.model import EyeStateClassifierNet
+from face_analysis.commons.get_weights import download_weights_if_necessary 
 
 SHAPE_PREDICTOR_URL = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
 

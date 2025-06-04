@@ -7,7 +7,7 @@ import torch
 import torchvision
 from torchvision import transforms
 
-from .model import L2CS
+from face_analysis.gazes.model import L2CS
 
 transformations = transforms.Compose([
     transforms.ToPILImage(),

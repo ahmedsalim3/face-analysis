@@ -25,15 +25,14 @@
 # https://github.com/ymitiku/EyeStateDetection/blob/master/demo/__init__.py
 # ==================================================================================
 
-import logging
 import os
 import tensorflow as tf
 
 import cv2
 import numpy as np
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+from face_analysis.commons.logger import Logger
+log = Logger()
 
 def get_dlib_points(img, predictor, rectangle):
     """

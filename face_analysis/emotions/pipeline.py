@@ -29,8 +29,6 @@
 
 import pathlib
 from typing import Union, Tuple, List, Optional
-import logging
-import pkg_resources
 
 import cv2
 import numpy as np
@@ -44,14 +42,15 @@ try:
 except ImportError:
     MTCNN = None
 
-from .utils import load_image, setup_gpu
-from .results import EmotionResultContainer
-
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger("emotions")
 
 import tensorflow as tf
 tf.get_logger().setLevel('ERROR')
+
+from face_analysis.commons.logger import Logger
+from face_analysis.emotions.utils import load_image, setup_gpu
+from face_analysis.emotions.results import EmotionResultContainer
+
+log = Logger()
 
 class Pipeline:
 

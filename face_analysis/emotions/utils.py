@@ -9,8 +9,8 @@ import numpy as np
 from PIL import Image
 import tensorflow as tf
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger("emotions.utils")
+from face_analysis.commons.logger import Logger
+log = Logger()
 
 
 class InvalidImage(Exception):

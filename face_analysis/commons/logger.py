@@ -49,7 +49,7 @@ class Logger:
         if self.log_level <= logging.DEBUG:
             self.dump_log(f"🕷️ {message}")
 
-    def warn(self, message):
+    def warning(self, message):
         """
         Set log level to 30 to see warning messages
         export LOG_LEVEL=30

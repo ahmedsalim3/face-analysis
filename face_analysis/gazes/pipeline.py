@@ -36,12 +36,12 @@ try:
 except ImportError:
     MTCNN = None
 
-from .utils import prep_input_numpy, getArch
-from .results import GazeResultContainer
-from ..commons.get_weights import download_weights_if_necessary 
+from face_analysis.gazes.utils import prep_input_numpy, getArch
+from face_analysis.gazes.results import GazeResultContainer
+from face_analysis.commons.get_weights import download_weights_if_necessary 
+from face_analysis.commons.logger import Logger
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger("gaze")
+log = Logger()
 
 L2CSNET_WEIGHT_URL = "https://drive.google.com/uc?id=18S956r4jnHtSeT8z8t3z8AoJZjVnNqPJ"
 

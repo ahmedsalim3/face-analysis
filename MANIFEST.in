@@ -1,7 +1,0 @@
-include LICENSE.txt
-include README.md
-include models/*.pkl
-include models/*.dat
-include models/*.h5
-include models/*.xml
-recursive-include src/face_analysis/emotions/data *
