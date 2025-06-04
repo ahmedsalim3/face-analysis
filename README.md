@@ -126,20 +126,11 @@ img_out = emotions_render(img_in, results)
 
 ```sh
 project_root/
-├── data/               
+├── data/       
 ├── input/
-│   ├── test_1.png
-│   └── test_2.jpg       
-├── output/             
-│   ├── single/
-│   ├── folder/
-│   ├── best/
-│   └── face_analysis_results.json
-│
+├── output/
 ├── scripts/
-│   └── ...
-├── face_analysis/                    
-│   └── ...
+├── face_analysis/                 
 │
 ├── LICENSE.txt
 ├── pyproject.toml
