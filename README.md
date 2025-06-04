@@ -1,6 +1,6 @@
-# Face Analysis
+# Face Analysis Kit
 
-A package for analyzing faces in images to detect eye state, gaze direction, and facial expressions.
+A Python package for analyzing faces in images to detect eye state, gaze direction, and facial expressions.
 
 |   |   |
 |-------------|--------------|
@@ -16,7 +16,23 @@ A package for analyzing faces in images to detect eye state, gaze direction, and
 
 ## How to install:
 
-1. Create a virtual environment and install dependencies:
+
+### 1. Install from PyPI 
+
+```sh
+pip install face_analysis_kit
+```
+
+### 2. Build and install from source
+
+1. Clone the repo
+
+```sh
+git clone https://github.com/ahmedsalim3/face-analysis.git
+cd face-analysis
+```
+
+2. Create a virtual environment and install dependencies:
 
 ```sh
 make install
@@ -26,11 +42,13 @@ This will:
 - Install all dependencies using `uv`
 - Set up pre-commit hooks for code quality
 
-2. Activate the environment:
+3. Activate the environment:
 
 ```sh
 source .venv/bin/activate
 ```
+
+__Optional: Install the package in editable mode `pip install -e .`__
 
 ## Usage Examples
 
@@ -76,7 +94,7 @@ img_out = GazesRender(img_in, results)
 
 |   |   |
 |-------------|--------------|
-| ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_gazes.png) |
+| ![input](./input/test_2.jpg) | ![output](./output/folder/annotated/test_2_gazes.png) |
 |   |   |
 
 #### Eye State Detection
@@ -97,7 +115,7 @@ img_out = eyes_render(img_in, results)
 
 |   |   |
 |-------------|--------------|
-| ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_eyes.png) |
+| ![input](./input/test_2.jpg) | ![output](./output/folder/annotated/test_2_eyes.png) |
 |   |   |
 
 #### Emotion Detection
@@ -118,7 +136,7 @@ img_out = emotions_render(img_in, results)
 
 |   |   |
 |-------------|--------------|
-| ![input](./input/test_2.jpg) | ![output](./output/annotated/test_2_emotions.png) |
+| ![input](./input/test_2.jpg) | ![output](./output/folder/annotated/test_2_emotions.png) |
 |   |   |
 
 
@@ -138,4 +156,13 @@ project_root/
 ├── requirements.txt
 ├── uv.lock
 └── Makefile
+```
+
+## Contributing
+
+Contributions are welcome! Please fork the repository, make your changes, and submit a pull request.
+
+```sh
+make install  # to setup environment and hooks
+make test     # to run tests before submitting
 ```

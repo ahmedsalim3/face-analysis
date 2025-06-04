@@ -339,7 +339,7 @@ wheels = [
 ]
 
 [[package]]
-name = "face-analysis"
+name = "face-analysis-kit"
 source = { editable = "." }
 dependencies = [
     { name = "dlib" },

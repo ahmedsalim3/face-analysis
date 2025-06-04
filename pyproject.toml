@@ -1,5 +1,5 @@
 [project]
-name = "face_analysis"
+name = "face-analysis-kit"
 description = "A package for analyzing faces in images to detect eye state, gaze direction, and facial expressions"
 authors = [
     {name = "Ahmed Salim"},
